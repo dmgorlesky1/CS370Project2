@@ -54,11 +54,12 @@ static pid_t childPid = 0;
 int main(void) {
     char** line;
     /*
-     * TODO:  Define a signal handler function below, add a function prototype above, and call the
+     * Define a signal handler function below, add a function prototype above, and call the
      * 'signal' system call here to put that handler in place for the SIGINT signal.  (The SIGINT
      * signal is what gets sent to a process when you hit Ctrl-C).  The implementation of your
      * signal hander should deliver the received signal to the process with pid 'childPid'
      * (above).  Note that when 'childPid' contains 0, the signal should be ignored.
+     * -Dillon
      */
     signal(SIGINT, SIG_IGN);
     
@@ -97,13 +98,14 @@ int main(void) {
                     proccess_line(line, &lineIndex, args);
                 } else {
                     /*
-                     * TODO:  Write code here to wait for the child process to die.  When the
+                     * Write code here to wait for the child process to die.  When the
                      * child finally does die, include a printf that prints a message like:
                      *
                      *            "Child 123 exited with status 0"
                      *
                      *        Where 123 here is the process id of the child and 0 is the exit
                      *        status of that process.
+                     * -Dillon
                      */
     //                while(*line){
       //                  printf("%s\n", *line++);
@@ -150,10 +152,11 @@ int main(void) {
 void proccess_line(char** line, int* lineIndex, char** args) {
     if (line[*lineIndex] == NULL) { /* Base case -- nothing left in line */
         /*
-         * TODO:  We've read the end of a command line.  Here args is an array of strings
+         * We've read the end of a command line.  Here args is an array of strings
          * corresponding to the command line arguments of a process that needs to get started.
          * Replace the call to the 'exit' system call below with code to replace this in-memory
          * process image with an instance of the specified program.
+         * -Dillon
          */
         
 
@@ -220,8 +223,9 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
     pid_t pid;       /* PID of a child process */
 
     /*
-     * TODO: Write code here that will create a pipe -- a unidirectional data channel that can be
+     * Write code here that will create a pipe -- a unidirectional data channel that can be
      * used for interprocess communication.
+     * -Dillon
      */
     pipe(pipefd);
 
