@@ -11,16 +11,15 @@
 int length = 0;
 static char HISTORY[HIST_SIZE][256]; 
 void save_history(char* command){
-    char* in;
-    char* out;
-    printf("SAVE   %s\n", command);
+    char in[256];
+    char out[256];
     if(length == 39){
-            out = HISTORY[length - 1];
+            strcpy(out, HISTORY[length - 1]);
             strcpy(HISTORY[length - 1], HISTORY[length]);
             length = length - 2;
-        while(length != 0){
-            in = out;
-            out = HISTORY[length];
+        while(length >= 0){
+            strcpy(in, out);
+            strcpy(out, HISTORY[length]);
             strcpy(HISTORY[length], in);
             length = length - 1;
         }
@@ -28,17 +27,13 @@ void save_history(char* command){
         strcpy(HISTORY[length], command);
     } else {
         strcpy(HISTORY[length], command);
-        printf("ELSE  %d   %s\n",length, HISTORY[length]);
         length++;
     }
-    printf("HISTORY   %d   %s\n", length, HISTORY[length - 1]);
 }
 
 void history_print(){
-    printf("PRINT   %d\n", length);
     int cnt = 0;
     for(;cnt < length; cnt++){
-        printf("HERE\n");
         printf("%d: %s\n", cnt, HISTORY[cnt]);
     }
 }
