@@ -78,7 +78,7 @@ int main(void) {
             /* Dig out the arguments for a single process */
             parse_args(args, line, &lineIndex);
 
-            /* TODO: Somewhere here remember commands executed*/
+            /* remember commands executed*/
             save_history(*line);
 
             /* Determine which command we are running*/
@@ -236,7 +236,7 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
         
         //Does this mean to change STDOUT from 1 to a new file descriptor like
         //on the recent test?
-
+ 
 
 
 

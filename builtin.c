@@ -1,5 +1,6 @@
 #include "shell.h"
 #include "history.h"
+#include <sys/stat.h>
 
 /**
  * do_file_list
@@ -11,10 +12,6 @@
  *        it specifies the directory to list.
  */
 void do_file_list(char** args) {
-    /*                                                                          
-     * TODO: Write code here that will list the content of the specified directory (or if no
-     * directory was specified, the current directory).
-     */                                                                         
     DIR *d;//Pointer to DIR type
     struct dirent *dir;
     if(args[1] == NULL){//Current directory
@@ -56,10 +53,6 @@ void do_file_list(char** args) {
  *        args[x] = NULL indicates the end of the argument list.
  */
 void do_file_remove(char** args) {
-    /*                                                                          
-     * TODO: Write code here that will remove the specified list of files.  If no file list is
-     * specified, print a usage message.
-     */          
     
     int n = 1;                                                               
     // unlink system call
@@ -88,6 +81,12 @@ void do_touch(char** args) {
      * TODO: Write code here that will modify the access time of a file(s) if it exists, or create
      * the file(s) if it/they does not exist.  If no file list is specified, print a usage message.
      */                                                                         
+    struct stat statbuf;
+    if(stat(args[1], &statbuf) == -1){
+        open(args[1], O_CREAT, 0600);
+    } else {
+        utime(args[1], NULL);
+    }
 
 
 
@@ -110,9 +109,6 @@ void do_touch(char** args) {
  *        args[x] = NULL indicates the end of the argument list.
  */
 void do_history(char** args) {
-    /*                                                                          
-     * TODO: Write code here that will print the last n commands executed via this shell.
-     */                                                                         
     history_print();
 
 
