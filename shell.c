@@ -108,14 +108,10 @@ int main(void) {
                      *        status of that process.
                      * -Dillon
                      */
-    //                while(*line){
-      //                  printf("%s\n", *line++);
-        //            }
                     if(waitpid(-1, &status, 0) == -1){
                         perror("Waitpid() failed.");
                         exit(EXIT_FAILURE);
                     }
-                    proccess_line(line, &lineIndex, args);  
                      
                     if(WIFEXITED(status)){
                         int es = WEXITSTATUS(status);
@@ -160,9 +156,7 @@ void proccess_line(char** line, int* lineIndex, char** args) {
          * -Dillon
          */
         
-
-        
-        execvp(args[0], args);
+        execvp(*args, args);
 
 
     } else if (strcmp(line[*lineIndex], ">>") == 0) {
