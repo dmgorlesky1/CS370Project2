@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "history.h"
 
 /**
  * do_file_list
@@ -31,15 +32,18 @@ void do_file_list(char** args) {
 
     } else {//Not current directory
     //.. represents parent directory
+        d = opendir("..");
+        if(d == NULL){
+            printf("Could not open current directory.\n");
+            exit(0);
+        }
+
+        while((dir = readdir(d)) != NULL){
+            printf("%s\n", dir->d_name);
+        }
+        closedir(d);
+
     }
-
-
-
-
-
-
-
-
 }
 
 /**
@@ -55,15 +59,21 @@ void do_file_remove(char** args) {
     /*                                                                          
      * TODO: Write code here that will remove the specified list of files.  If no file list is
      * specified, print a usage message.
-     */                                                                         
-
-
-
-
-
-
-
+     */          
+    
+    int n = 1;                                                               
+    // unlink system call
+    if(args[n] != NULL){
+        while(args[n] != NULL){
+            unlink(args[n]);
+            n++;
+        }
+    }else {
+        printf("Usage: rm <file 1> <file 2> ...\n");
+   }
 }
+
+
 /**
  * do_touch
  *
@@ -103,10 +113,7 @@ void do_history(char** args) {
     /*                                                                          
      * TODO: Write code here that will print the last n commands executed via this shell.
      */                                                                         
-
-
-
-
+    history_print();
 
 
 

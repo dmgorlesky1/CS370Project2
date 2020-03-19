@@ -1,3 +1,5 @@
 
+void save_history(char*);
 
-void historyPrint(char* empty);
+void history_print();
+
