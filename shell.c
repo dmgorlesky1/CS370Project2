@@ -97,6 +97,8 @@ int main(void) {
                 if (CHILD_PID(childPid)) {
                     /* The child shell continues to process the command line */
                     proccess_line(line, &lineIndex, args);
+                    printf("%s: No such file or directory\n", args[0]);
+                    exit(0);
                 } else {
                     /*
                      * Write code here to wait for the child process to die.  When the
