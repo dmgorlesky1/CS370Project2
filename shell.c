@@ -235,13 +235,9 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          * connect this processes standard output stream to the output side of the pipe in pipefd.
          * Close any unnecessary file descriptors.
          */
-        
-        //Does this mean to change STDOUT from 1 to a new file descriptor like
-        //on the recent test?
- 
-
-
-
+        close(pipefd[0]);
+        write(pipefd[1], line, 256);
+        close(pipefd[1]);
 
         /*
          * TODO:  We're ready to start our pipeline!  Replace the call to the 'exit' system call
@@ -249,8 +245,8 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          * specified program.  (Here, in p1Args)
          */
         //Exec??
-
-        _exit(1);
+        char* args[] = {*line, NULL};
+        execvp(*p1Args, args);
 
     } else {  /* Parent will keep going */
         char* args[MAX_ARGS];
@@ -263,7 +259,10 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
 
         //find the last argument from the p1Args param then find its next using
         //lineIndex? That way I'd have all the rightside args
-
+       
+        close(pipefd[1]);
+        read(pipefd[0], args, 256);
+        close(pipefd[0]);
 
 
         /* Read the args for the next process in the pipeline */

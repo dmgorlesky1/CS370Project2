@@ -36,6 +36,9 @@ void save_history(char* command){
     }
 }
 
+/**
+ * Prints the previous history for commands typed.
+ */
 void history_print(){
     int cnt = 0;
     for(;cnt < length - 1; cnt++){

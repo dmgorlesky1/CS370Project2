@@ -80,12 +80,20 @@ void do_touch(char** args) {
     /*                                                                          
      * TODO: Write code here that will modify the access time of a file(s) if it exists, or create
      * the file(s) if it/they does not exist.  If no file list is specified, print a usage message.
-     */                                                                         
+     */       
+    int n =1;                                                                  
     struct stat statbuf;
-    if(stat(args[1], &statbuf) == -1){
-        open(args[1], O_CREAT, 0600);
+    if(args[n] != NULL){
+        while(args[n] != NULL){
+            if(stat(args[n], &statbuf) == -1){
+                open(args[n], O_CREAT, 0600);
+            } else {
+                utime(args[n], NULL);
+            }
+            n++;
+        }
     } else {
-        utime(args[1], NULL);
+        printf("touch <file_name_1> <file_name_2> ...\n");
     }
 
 
