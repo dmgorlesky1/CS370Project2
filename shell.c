@@ -1,3 +1,9 @@
+/**
+ * Modified By:
+ * @Author Dillon Gorlesky
+ * @Author Brooke Kiser
+ */
+
 /*
  * shell.c
  *
@@ -53,7 +59,6 @@ static pid_t childPid = 0;
  */
 int main(void) {
     char** line;
-    char* command = "";
     /*
      * Define a signal handler function below, add a function prototype above, and call the
      * 'signal' system call here to put that handler in place for the SIGINT signal.  (The SIGINT
@@ -216,7 +221,6 @@ void proccess_line(char** line, int* lineIndex, char** args) {
 void do_pipe(char** p1Args, char** line, int* lineIndex) {
     int   pipefd[2]; /* Array of integers to hold 2 file descriptors. */
     pid_t pid;       /* PID of a child process */
-    int status = 0;
 
     /*
      * Write code here that will create a pipe -- a unidirectional data channel that can be
@@ -235,8 +239,8 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          * Close any unnecessary file descriptors.
          */
         close(pipefd[0]);
-        close(STDOUT_FILENO);
-        dup(pipefd[1]);//CHANGE TO DUP WRAPPER
+        close(STDOUT_FILENO);//Closes stdin so the dup goes to stdin
+        dup_wrapper(pipefd[1]);//CHANGE TO DUP WRAPPER
         close(pipefd[1]);
         /*
          * TODO:  We're ready to start our pipeline!  Replace the call to the 'exit' system call
@@ -251,13 +255,9 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          * connect this processes standard input stream to the input side of the pipe in pipefd.
          * Close any unnecessary file descriptors.
          */
-
-        //find the last argument from the p1Args param then find its next using
-        //lineIndex? That way I'd have all the rightside args
-       
         close(pipefd[1]);
         close(STDIN_FILENO);
-        dup(pipefd[0]);//CHANGE TO DUP WRAPPER
+        dup_wrapper(pipefd[0]);//CHANGE TO DUP WRAPPER
         close(pipefd[0]);
 
         /* Read the args for the next process in the pipeline */
@@ -282,7 +282,6 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
  */
 void parse_args(char** args, char** line, int* lineIndex) {
     int i;
-
     for (i = 0;    line[*lineIndex] != NULL
                 && !is_special(line[*lineIndex]); ++(*lineIndex), ++i) {
         args[i] = line[*lineIndex];
@@ -333,17 +332,10 @@ void pipe_wrapper(int pipefds[]) {
      * is less than 0, use perror() to print an error message and the _exit system call to
      * terminate the program.                                             
      */                                                                         
-   
-   
-   //Does it still perform pipe() if its in if statement? 
     if(pipe(pipefds) < 0){
         perror("Error: ");
         _exit(1);
     }
-
-
-
-
 }
 
 /*
@@ -358,19 +350,13 @@ int dup_wrapper(int oldfd) {
      * nothing has gone wrong.  Check the return value of dup -- if it is less than 0, use perror()
      * to print an error message and the _exit system call to terminate the program.
      */                                                                         
-
-    //dup or dup2????
     int copy_desc = dup(oldfd);
     if(copy_desc < 0){
         perror("Error :");
         _exit(1);
     }
     
-
-    //Close oldfd pointer??
     return copy_desc;
-
-
 }
 
 /*

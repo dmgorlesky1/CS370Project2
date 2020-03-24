@@ -1,6 +1,11 @@
 #include "shell.h"
 #include "history.h"
 #include <sys/stat.h>
+/**
+ *Modified BY:
+ @Author Dillon Gorlesky
+ @Author Brooke Kiser
+ */
 
 /**
  * do_file_list
@@ -20,7 +25,7 @@ void do_file_list(char** args) {
             printf("Could not open current directory.\n");
             exit(0);
         }
-
+        //Prints out contents of direction
         while((dir = readdir(d)) != NULL){
             printf("%s\n", dir->d_name);
         }
@@ -95,13 +100,6 @@ void do_touch(char** args) {
     } else {
         printf("touch <file_name_1> <file_name_2> ...\n");
     }
-
-
-
-
-
-
-
 }
 /**
  * do_history
@@ -116,10 +114,6 @@ void do_touch(char** args) {
  *        args[0] is "history", additional arguments are in args[1] ... n.
  *        args[x] = NULL indicates the end of the argument list.
  */
-void do_history(char** args) {
+void do_history() {
     history_print();
-
-
-
-
 }

@@ -2,11 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #define HIST_SIZE 40
-//JUST MAKE A  HISTORY.H AND STUB IT OUT 
-//TO RUN DO "make"
-//the typr "shell"
-//you should test stuff for ls, rm, etc
-// Stuff in here to save and list history
 /**
  * Saves and print the history of commands
  *
@@ -18,8 +13,8 @@ int length = 0; //global length
 static char HISTORY[HIST_SIZE][256]; //holds the previous commands 
 
 /**
- * Saves the comands history to 
- *
+ * Saves the comands inputed to history 
+ * @param char*: The command being stored
  */
 void save_history(char* command){
     char in[256]; //temp for the new value
