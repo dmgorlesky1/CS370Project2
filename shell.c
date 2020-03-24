@@ -157,12 +157,7 @@ void proccess_line(char** line, int* lineIndex, char** args) {
          * process image with an instance of the specified program.
          * -Dillon
          */
-        
-        char* cargs[] = {*line, NULL};
-        printf("BEFORE EXEC %s   %s\n", *args, *line);
-        execvp(*args, cargs);
-        printf("AFTER EXEC\n");
-
+        execvp(*args, args);
 
     } else if (strcmp(line[*lineIndex], ">>") == 0) {
         (*lineIndex)++;
@@ -186,14 +181,11 @@ void proccess_line(char** line, int* lineIndex, char** args) {
         proccess_line(line, lineIndex, args);
 
     } else if (strcmp(line[*lineIndex], ">") == 0) {
-        printf("BEFORE EXEC1\n");
         (*lineIndex)++;
         stdout_redirection(line[*lineIndex]);
-        printf("BEFORE EXEC1\n");
 
         (*lineIndex)++;
         proccess_line(line, lineIndex, args);
-        printf("BEFORE EXEC1\n");
 
     } else if (strcmp(line[*lineIndex], "<") == 0) {
         (*lineIndex)++;
@@ -203,7 +195,6 @@ void proccess_line(char** line, int* lineIndex, char** args) {
         proccess_line(line, lineIndex, args);
 
     } else if (strcmp(line[*lineIndex], "|") == 0) {
-        printf("BEFORE EXEC2\n");
         (*lineIndex)++;
         do_pipe(args, line, lineIndex);
         /* do_pipe() calls proccess_line() only in some cases */
@@ -227,7 +218,6 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
     pid_t pid;       /* PID of a child process */
     int status = 0;
 
-    printf("EXEC P1ARGS %d\n", *lineIndex);
     /*
      * Write code here that will create a pipe -- a unidirectional data channel that can be
      * used for interprocess communication.
@@ -245,24 +235,17 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          * Close any unnecessary file descriptors.
          */
         close(pipefd[0]);
-        write(pipefd[1], line, 256);
-
+        close(STDOUT_FILENO);
+        dup(pipefd[1]);//CHANGE TO DUP WRAPPER
+        close(pipefd[1]);
         /*
          * TODO:  We're ready to start our pipeline!  Replace the call to the 'exit' system call
          * below with code to replace this in-memeory process image with an instance of the
          * specified program.  (Here, in p1Args)
          */
-        //Exec??
-        //printf("EXEC P1ARGS %s\n", *p1Args);
-        char* args[] = {*line, NULL};
-        execvp(*p1Args, args);
-        close(pipefd[1]);
-
+        execvp(p1Args[0], p1Args);
     } else {  /* Parent will keep going */
         char* args[MAX_ARGS];
-        char* child_args[MAX_ARGS];
-        wait(&status);
-        printf("PARENT: \n");
         /*
          * TODO:  This process will handles the right-hand-side of this pipe.  Write code here to
          * connect this processes standard input stream to the input side of the pipe in pipefd.
@@ -273,16 +256,12 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
         //lineIndex? That way I'd have all the rightside args
        
         close(pipefd[1]);
-        read(pipefd[0], args, 256);
-        
-        printf("CHILDARGS: %s\n", *args);
+        close(STDIN_FILENO);
+        dup(pipefd[0]);//CHANGE TO DUP WRAPPER
+        close(pipefd[0]);
 
         /* Read the args for the next process in the pipeline */
         parse_args(args, line, lineIndex);
-        
-        printf("CHILDARGS: %s\n", *args);
-        *line = NULL;
-        close(pipefd[0]);
 
         /* And keep going... */
         proccess_line(line, lineIndex, args);
