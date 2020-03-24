@@ -158,7 +158,10 @@ void proccess_line(char** line, int* lineIndex, char** args) {
          * -Dillon
          */
         
-        execvp(*args, args);
+        char* cargs[] = {*line, NULL};
+        printf("BEFORE EXEC %s   %s\n", *args, *line);
+        execvp(*args, cargs);
+        printf("AFTER EXEC\n");
 
 
     } else if (strcmp(line[*lineIndex], ">>") == 0) {
@@ -183,11 +186,14 @@ void proccess_line(char** line, int* lineIndex, char** args) {
         proccess_line(line, lineIndex, args);
 
     } else if (strcmp(line[*lineIndex], ">") == 0) {
+        printf("BEFORE EXEC1\n");
         (*lineIndex)++;
         stdout_redirection(line[*lineIndex]);
+        printf("BEFORE EXEC1\n");
 
         (*lineIndex)++;
         proccess_line(line, lineIndex, args);
+        printf("BEFORE EXEC1\n");
 
     } else if (strcmp(line[*lineIndex], "<") == 0) {
         (*lineIndex)++;
@@ -197,6 +203,7 @@ void proccess_line(char** line, int* lineIndex, char** args) {
         proccess_line(line, lineIndex, args);
 
     } else if (strcmp(line[*lineIndex], "|") == 0) {
+        printf("BEFORE EXEC2\n");
         (*lineIndex)++;
         do_pipe(args, line, lineIndex);
         /* do_pipe() calls proccess_line() only in some cases */
@@ -226,7 +233,7 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
      * used for interprocess communication.
      * -Dillon
      */
-    pipe(pipefd);
+    pipe_wrapper(pipefd);
 
     /* Fork the current process */
     pid = fork_wrapper();
@@ -253,6 +260,7 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
 
     } else {  /* Parent will keep going */
         char* args[MAX_ARGS];
+        char* child_args[MAX_ARGS];
         wait(&status);
         printf("PARENT: \n");
         /*
@@ -266,11 +274,15 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
        
         close(pipefd[1]);
         read(pipefd[0], args, 256);
-        close(pipefd[0]);
-
+        
+        printf("CHILDARGS: %s\n", *args);
 
         /* Read the args for the next process in the pipeline */
         parse_args(args, line, lineIndex);
+        
+        printf("CHILDARGS: %s\n", *args);
+        *line = NULL;
+        close(pipefd[0]);
 
         /* And keep going... */
         proccess_line(line, lineIndex, args);

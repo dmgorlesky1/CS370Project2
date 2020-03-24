@@ -6,7 +6,13 @@
 //TO RUN DO "make"
 //the typr "shell"
 //you should test stuff for ls, rm, etc
-// TODO: Stuff in here to save and list history
+// Stuff in here to save and list history
+/**
+ * Saves and print the history of commands
+ *
+ * @author Brooke Kiser
+ * @author Dilon Gorlesky
+ */
 
 int length = 0; //global length 
 static char HISTORY[HIST_SIZE][256]; //holds the previous commands 
