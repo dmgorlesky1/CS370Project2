@@ -53,6 +53,7 @@ static pid_t childPid = 0;
  */
 int main(void) {
     char** line;
+    char* command = "";
     /*
      * Define a signal handler function below, add a function prototype above, and call the
      * 'signal' system call here to put that handler in place for the SIGINT signal.  (The SIGINT
@@ -79,7 +80,7 @@ int main(void) {
             parse_args(args, line, &lineIndex);
 
             /* remember commands executed*/
-            save_history(*line);
+            save_history(*args);
 
             /* Determine which command we are running*/
             if (strcmp(args[0], "ls") == 0) {
@@ -122,7 +123,6 @@ int main(void) {
                 }
             }
         }
-
         /* Read the next line of input from the keyboard */
         line = prompt_and_read();
     }
@@ -218,7 +218,9 @@ void proccess_line(char** line, int* lineIndex, char** args) {
 void do_pipe(char** p1Args, char** line, int* lineIndex) {
     int   pipefd[2]; /* Array of integers to hold 2 file descriptors. */
     pid_t pid;       /* PID of a child process */
+    int status = 0;
 
+    printf("EXEC P1ARGS %d\n", *lineIndex);
     /*
      * Write code here that will create a pipe -- a unidirectional data channel that can be
      * used for interprocess communication.
@@ -237,7 +239,6 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          */
         close(pipefd[0]);
         write(pipefd[1], line, 256);
-        close(pipefd[1]);
 
         /*
          * TODO:  We're ready to start our pipeline!  Replace the call to the 'exit' system call
@@ -245,12 +246,15 @@ void do_pipe(char** p1Args, char** line, int* lineIndex) {
          * specified program.  (Here, in p1Args)
          */
         //Exec??
+        //printf("EXEC P1ARGS %s\n", *p1Args);
         char* args[] = {*line, NULL};
         execvp(*p1Args, args);
+        close(pipefd[1]);
 
     } else {  /* Parent will keep going */
         char* args[MAX_ARGS];
-
+        wait(&status);
+        printf("PARENT: \n");
         /*
          * TODO:  This process will handles the right-hand-side of this pipe.  Write code here to
          * connect this processes standard input stream to the input side of the pipe in pipefd.
